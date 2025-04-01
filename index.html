@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTap | My Lovely Planet Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel='icon' href='/src/icons/logo.png' type='image/x-icon'>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003100',
+                        secondary: '#5a9d2d',
+                        light: '#ffffff'
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-10px)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .polygon-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cpattern id='pattern' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0L50 50L0 100Z' fill='%235a9d2d' fill-opacity='0.1'/%3E%3Cpath d='M100 0L50 50L100 100Z' fill='%235a9d2d' fill-opacity='0.1'/%3E%3C/pattern%3E%3Crect width='100%25' height='100%25' fill='url(%23pattern)'/%3E%3C/svg%3E");
+        }
+
+        .star {
+            position: absolute;
+            opacity: 0.8;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* Generate stars */
+        .stars-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(1px 1px at 20px 30px, #5a9d2d, transparent),
+                radial-gradient(1px 1px at 40px 70px, #5a9d2d, transparent),
+                radial-gradient(1px 1px at 50px 160px, #5a9d2d, transparent),
+                radial-gradient(1px 1px at 90px 40px, #5a9d2d, transparent),
+                radial-gradient(1px 1px at 130px 80px, #5a9d2d, transparent),
+                radial-gradient(1px 1px at 160px 120px, #5a9d2d, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+
+        .hero-bg {
+            position: relative;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/src/img/hero-bg.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+            z-index: -1;
+        }
+
+        .polygon-bg {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-light">
+    <!-- Starry background container -->
+    <div class="stars-container relative min-h-screen overflow-hidden">
+
+        <!-- Header -->
+        <header class="fixed top-0 left-0 right-0 z-50 bg-light bg-opacity-95 border-b border-secondary">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex justify-between items-center">
+                    <a href="/" class="flex items-center space-x-3">
+                        <!-- Logo is a placeholder SVG tree -->
+                        <svg class="h-10 w-10 text-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.5a1 1 0 0 1 1 1v6.25a1 1 0 0 1-2 0V3.5a1 1 0 0 1 1-1zm-6 9a1 1 0 0 1 1 1v2.25a1 1 0 0 1-2 0V12.5a1 1 0 0 1 1-1zm12 0a1 1 0 0 1 1 1v2.25a1 1 0 0 1-2 0V12.5a1 1 0 0 1 1-1zM12 5.5a1 1 0 0 1 1 1v3.25a1 1 0 0 1-2 0V6.5a1 1 0 0 1 1-1z" />
+                            <path d="M12 20.5a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8zm0 2a10 10 0 0 1-10-10 10 10 0 0 1 10-10 10 10 0 0 1 10 10 10 10 0 0 1-10 10z" />
+                        </svg>
+                        <span class="text-2xl font-extralight tracking-wider text-primary">EcoTap</span>
+                    </a>
+
+                    <nav class="hidden md:flex space-x-8">
+                        <a href="#game" class="text-primary hover:text-secondary font-light text-lg tracking-wide transition duration-300">Game</a>
+                        <a href="#features" class="text-primary hover:text-secondary font-light text-lg tracking-wide transition duration-300">Features</a>
+                        <a href="#planting" class="text-primary hover:text-secondary font-light text-lg tracking-wide transition duration-300">Tree Planting</a>
+                        <a href="#screenshots" class="text-primary hover:text-secondary font-light text-lg tracking-wide transition duration-300">Screenshots</a>
+                        <a href="#download" class="text-primary hover:text-secondary font-light text-lg tracking-wide transition duration-300">Download</a>
+                    </nav>
+
+                    <!-- Mobile menu button -->
+                    <button class="md:hidden text-primary hover:text-secondary">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Navigation Menu (hidden by default) -->
+                <div class="hidden md:hidden pt-4 pb-2 border-t border-gray-200 mt-3">
+                    <a href="#game" class="block py-2 text-primary hover:text-secondary font-light">Game</a>
+                    <a href="#features" class="block py-2 text-primary hover:text-secondary font-light">Features</a>
+                    <a href="#planting" class="block py-2 text-primary hover:text-secondary font-light">Tree Planting</a>
+                    <a href="#screenshots" class="block py-2 text-primary hover:text-secondary font-light">Screenshots</a>
+                    <a href="#download" class="block py-2 text-primary hover:text-secondary font-light">Download</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="relative min-h-screen flex items-center justify-center pt-20 hero-bg">
+            <div class="container mx-auto px-4 py-16 md:py-32">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <h1 class="text-5xl md:text-7xl font-extralight text-primary leading-tight mb-6 tracking-wider">
+                        Play Games,<br><span class="text-secondary">Plant Trees</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl font-light text-primary/80 mb-8 max-w-2xl mx-auto">
+                        Match puzzles and watch real trees grow in the world's most engaging eco-friendly mobile game.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#download" class="inline-flex items-center justify-center px-8 py-4 text-lg font-light text-light bg-secondary border border-secondary hover:bg-opacity-90 transition-all duration-300">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Now
+                        </a>
+                        <a href="#game" class="inline-flex items-center justify-center px-8 py-4 text-lg font-light text-primary bg-transparent border border-primary hover:bg-primary hover:text-light transition-all duration-300">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Learn More
+                        </a>
+                    </div>
+
+                    <div class="mt-12 border border-secondary bg-light inline-flex items-center justify-center px-6 py-4">
+                        <div class="text-center">
+                            <div class="text-4xl font-light text-secondary">4.8</div>
+                            <div class="flex text-secondary mt-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decorative elements -->
+            <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-light to-transparent"></div>
+        </section>
+        <!-- Game Info Section -->
+        <section id="game" class="py-20 relative overflow-hidden">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Welcome to My Lovely Planet</h2>
+                    <p class="text-xl font-light text-primary/80">A captivating match-three puzzle game where you can plant trees in real life just by completing levels!</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-light border border-secondary/30 p-8 flex flex-col items-center text-center transform transition-all duration-300 hover:translate-y-[-5px]">
+                        <div class="w-16 h-16 flex items-center justify-center mb-6 text-secondary">
+                            <i class="fas fa-gamepad text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-light text-primary mb-4">Fun Gameplay</h3>
+                        <p class="text-primary/80 font-light">Fast-paced match-three gameplay with engaging levels for both beginners and experts!</p>
+                    </div>
+
+                    <div class="bg-light border border-secondary/30 p-8 flex flex-col items-center text-center transform transition-all duration-300 hover:translate-y-[-5px]">
+                        <div class="w-16 h-16 flex items-center justify-center mb-6 text-secondary">
+                            <i class="fas fa-tree text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-light text-primary mb-4">Real Impact</h3>
+                        <p class="text-primary/80 font-light">Help us restore forests on our planet! Collect enough dew drops, and we'll plant a real tree for you.</p>
+                    </div>
+
+                    <div class="bg-light border border-secondary/30 p-8 flex flex-col items-center text-center transform transition-all duration-300 hover:translate-y-[-5px]">
+                        <div class="w-16 h-16 flex items-center justify-center mb-6 text-secondary">
+                            <i class="fas fa-globe-americas text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-light text-primary mb-4">Global Adventure</h3>
+                        <p class="text-primary/80 font-light">Join charming Mother Nature in her journey across the world's most breathtaking landscapes.</p>
+                    </div>
+                </div>
+
+                <div class="mt-16 text-center">
+                    <div class="inline-block border border-secondary/50 py-3 px-6 text-primary/80 font-light">
+                        <i class="fas fa-users mr-2 text-secondary"></i>
+                        Over 10,000+ Downloads
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decorative background elements -->
+            <div class="absolute top-1/4 left-0 w-32 h-32 border-r border-t border-secondary/20 opacity-50"></div>
+            <div class="absolute bottom-1/4 right-0 w-32 h-32 border-l border-b border-secondary/20 opacity-50"></div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-primary/5 polygon-bg relative overflow-hidden">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Game Features</h2>
+                    <p class="text-xl font-light text-primary/80">Discover all the amazing features that make My Lovely Planet special</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <div class="space-y-10">
+                            <div class="flex">
+                                <div class="flex-shrink-0 w-16 h-16 border border-secondary flex items-center justify-center mr-6">
+                                    <i class="fas fa-puzzle-piece text-2xl text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-light text-primary mb-2">Match-Three Puzzles</h3>
+                                    <p class="text-primary/80 font-light">Engaging levels ranging from beginner-friendly to challenging expert puzzles.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex">
+                                <div class="flex-shrink-0 w-16 h-16 border border-secondary flex items-center justify-center mr-6">
+                                    <i class="fas fa-leaf text-2xl text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-light text-primary mb-2">Nature Scenes</h3>
+                                    <p class="text-primary/80 font-light">Create touching nature scenes: join animals for a forest picnic, dive with snow monkeys in hot springs, and more!</p>
+                                </div>
+                            </div>
+
+                            <div class="flex">
+                                <div class="flex-shrink-0 w-16 h-16 border border-secondary flex items-center justify-center mr-6">
+                                    <i class="fas fa-globe text-2xl text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-light text-primary mb-2">Offline Play</h3>
+                                    <p class="text-primary/80 font-light">100% ad-free and playable without an internet connection or Wi-Fi.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class=" p-2 ">
+                            <div class="relative aspect-[9/16] overflow-hidden">
+                                <img src="/src//img/main_aside.png" alt="Game Features" class="w-auto h-full object-cover">
+                            </div>
+                        </div>
+
+                        <!-- Decorative elements -->
+                        <div class="absolute -bottom-6 -left-6 w-32 h-24 border border-secondary bg-primary/5 flex items-center justify-center">
+                            <div class="text-center text-primary font-light">
+                                <div class="text-xl">For All Ages</div>
+                                <div class="text-sm mt-1">3+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-light border border-secondary/30 p-6 text-center">
+                        <div class="text-2xl font-light text-primary mb-2">Puzzle</div>
+                        <div class="text-sm text-primary/70">Game Genre</div>
+                    </div>
+
+                    <div class="bg-light border border-secondary/30 p-6 text-center">
+                        <div class="text-2xl font-light text-primary mb-2">Match-3</div>
+                        <div class="text-sm text-primary/70">Game Type</div>
+                    </div>
+
+                    <div class="bg-light border border-secondary/30 p-6 text-center">
+                        <div class="text-2xl font-light text-primary mb-2">Casual</div>
+                        <div class="text-sm text-primary/70">Game Style</div>
+                    </div>
+
+                    <div class="bg-light border border-secondary/30 p-6 text-center">
+                        <div class="text-2xl font-light text-primary mb-2">Single Player</div>
+                        <div class="text-sm text-primary/70">Game Mode</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tree Planting Section -->
+        <section id="planting" class="py-20 relative">
+            <div class="absolute inset-0 bg-cover bg-center opacity-[60%]" style="background-image: url('/src/img/trees.png');"></div>
+
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Plant Real Trees</h2>
+                            <p class="text-xl font-light text-primary/80 mb-8">When you plant a tree in the game, we plant one in real life! Join our mission to plant 1 billion trees worldwide.</p>
+
+                            <div class="space-y-6">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 w-12 h-12 border border-secondary flex items-center justify-center mr-4">
+                                        <i class="fas fa-tint text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-light text-primary mb-1">Collect Dew Drops</h3>
+                                        <p class="text-primary/80 font-light">Gather enough dew drops by completing levels, and our partner NGOs will plant a real tree for you.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 w-12 h-12 border border-secondary flex items-center justify-center mr-4">
+                                        <i class="fas fa-chart-line text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-light text-primary mb-1">Track Your Impact</h3>
+                                        <p class="text-primary/80 font-light">Check at any time how many real trees you've planted and the total trees planted by the community!</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 w-12 h-12 border border-secondary flex items-center justify-center mr-4">
+                                        <i class="fas fa-globe text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-light text-primary mb-1">Global Impact</h3>
+                                        <p class="text-primary/80 font-light">Every tree makes a difference. Join thousands of players making the world greener one match at a time.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative h-96">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="relative w-64 h-64 border border-secondary bg-white flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="text-6xl font-extralight text-secondary animate-pulse-slow">1B</div>
+                                        <div class="text-xl font-light text-primary mt-2">Trees Goal</div>
+                                    </div>
+
+                                    <!-- Decorative elements -->
+                                    <div class="absolute -top-8 -left-8 w-16 h-16 border border-secondary"></div>
+                                    <div class="absolute -bottom-8 -right-8 w-16 h-16 border border-secondary"></div>
+                                </div>
+                            </div>
+
+                            <!-- Tree icons scattered around -->
+                            <div class="absolute top-0 left-0 text-secondary text-opacity-30 text-4xl">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <div class="absolute top-1/4 right-1/4 text-secondary text-opacity-20 text-2xl">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <div class="absolute bottom-1/3 left-1/3 text-secondary text-opacity-40 text-3xl">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <div class="absolute bottom-1/4 right-0 text-secondary text-opacity-30 text-4xl">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screenshots Section -->
+        <section id="screenshots" class="py-20 bg-primary/5 polygon-bg">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Game Screenshots</h2>
+                    <p class="text-xl font-light text-primary/80">Explore the beautiful and tranquil world of My Lovely Planet</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Screenshot 1 -->
+                    <div class="relative group">
+                        <div class="border border-secondary overflow-hidden">
+                            <img src="/src/img/screen1.png" alt="Game Screenshot 1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                            <div class="p-6">
+                                <h3 class="text-xl font-light text-light">Forest Puzzles</h3>
+                                <p class="text-light/80 font-light">Beautiful forest setting with match-three gameplay</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screenshot 2 -->
+                    <div class="relative group">
+                        <div class="border border-secondary overflow-hidden">
+                            <img src="/src/img/screen2.png" alt="Game Screenshot 2" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                            <div class="p-6">
+                                <h3 class="text-xl font-light text-light">Mountain Adventure</h3>
+                                <p class="text-light/80 font-light">Explore mountain landscapes while solving puzzles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screenshot 3 -->
+                    <div class="relative group">
+                        <div class="border border-secondary overflow-hidden">
+                            <img src="/src/img/screen3.png" alt="Game Screenshot 3" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                            <div class="p-6">
+                                <h3 class="text-xl font-light text-light">Ocean Depths</h3>
+                                <p class="text-light/80 font-light">Underwater puzzles with beautiful sea creatures</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#download">
+                    <div class="mt-16 text-center">
+                        <div class="inline-flex items-center justify-center px-8 py-4 text-lg font-light text-primary bg-transparent border border-secondary hover:bg-secondary hover:text-light transition-all duration-300 cursor-pointer">
+                            <i class="fas fa-images mr-2"></i>
+                            View More Screenshots
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download" class="py-20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center opacity-[60%]" style="background-image: url('/src//img/dowmload.png');"></div>
+
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Download Now</h2>
+                    <p class="text-xl font-light text-primary/80 mb-12 max-w-2xl mx-auto">Start having fun and improving our world! Download My Lovely Planet and join our global community of eco-friendly gamers.</p>
+
+                    <div class="flex flex-col sm:flex-row justify-center space-y-6 sm:space-y-0 sm:space-x-6 mb-16">
+                        <a href="https://play.google.com/store/apps/details?id=com.mylovelyplanet.mylovelyforests&hl=fr" target="_blank">
+                            <div class="flex items-center justify-center px-8 py-6 bg-light border border-secondary hover:bg-secondary hover:text-light transition-all duration-300 cursor-pointer w-full sm:w-auto">
+                                <i class="fab fa-google-play text-3xl mr-3"></i>
+                                <div class="text-left">
+                                    <div class="text-xs">GET IT ON</div>
+                                    <div class="text-xl font-light">Google Play</div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="https://apps.apple.com/us/app/my-lovely-planet-puzzle-match3/id6473546315" target="_blank">
+                            <div class="flex items-center justify-center px-8 py-6 bg-light border border-secondary hover:bg-secondary hover:text-light transition-all duration-300 cursor-pointer w-full sm:w-auto">
+                                <i class="fab fa-apple text-3xl mr-3"></i>
+                                <div class="text-left">
+                                    <div class="text-xs">DOWNLOAD ON THE</div>
+                                    <div class="text-xl font-light">App Store</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-light border border-secondary/30 p-8 text-center">
+                            <div class="text-4xl font-light text-secondary mb-4">4.8</div>
+                            <div class="flex justify-center text-secondary mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p class="text-primary/80 font-light">Average Rating</p>
+                            <p class="text-sm text-primary/60 mt-2">Based on 769 reviews</p>
+                        </div>
+
+                        <div class="bg-light border border-secondary/30 p-8 text-center">
+                            <div class="text-4xl font-light text-secondary mb-4">10K+</div>
+                            <div class="text-secondary mb-2">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <p class="text-primary/80 font-light">Downloads</p>
+                            <p class="text-sm text-primary/60 mt-2">And growing every day</p>
+                        </div>
+
+                        <div class="bg-light border border-secondary/30 p-8 text-center">
+                            <div class="text-4xl font-light text-secondary mb-4">3+</div>
+                            <div class="text-secondary mb-2">
+                                <i class="fas fa-child"></i>
+                            </div>
+                            <p class="text-primary/80 font-light">Age Rating</p>
+                            <p class="text-sm text-primary/60 mt-2">Fun for all ages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="py-20 bg-primary/5 polygon-bg">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Player Reviews</h2>
+                    <p class="text-xl font-light text-primary/80">Hear what our community has to say about My Lovely Planet</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-light border border-secondary/30 p-8">
+                        <div class="flex text-secondary mb-4">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-primary/80 font-light italic mb-6">"I love that I can make a real impact on the environment while enjoying such a beautiful and relaxing game. The puzzles are challenging but not frustrating!"</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center text-secondary mr-3">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="text-primary font-medium">Emma R.</div>
+                                <div class="text-primary/60 text-sm">Mobile Gamer</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-light border border-secondary/30 p-8">
+                        <div class="flex text-secondary mb-4">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-primary/80 font-light italic mb-6">"This game has become my daily meditation. The visuals are stunning, and knowing that my gameplay contributes to real tree planting makes it even more special."</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center text-secondary mr-3">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="text-primary font-medium">Michael T.</div>
+                                <div class="text-primary/60 text-sm">Environmental Enthusiast</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="bg-light border border-secondary/30 p-8">
+                        <div class="flex text-secondary mb-4">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="text-primary/80 font-light italic mb-6">"I downloaded this for my kids, but now the whole family plays it! The perfect blend of fun gameplay and environmental education. We love tracking our tree planting progress."</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center text-secondary mr-3">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="text-primary font-medium">Sarah K.</div>
+                                <div class="text-primary/60 text-sm">Parent & Player</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-20 relative overflow-hidden">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto bg-light border border-secondary p-12 text-center relative">
+                    <h2 class="text-4xl md:text-5xl font-extralight text-primary mb-6 tracking-wider">Join Our Mission</h2>
+                    <p class="text-xl font-light text-primary/80 mb-8 max-w-2xl mx-auto">Help us reach our goal of planting 1 billion trees worldwide. Every puzzle you solve brings us one step closer to a greener planet.</p>
+                    <a href="#download" class="inline-flex items-center justify-center px-8 py-4 text-lg font-light text-light bg-secondary border border-secondary hover:bg-opacity-90 transition-all duration-300">
+                        <i class="fas fa-seedling mr-2"></i>
+                        Start Planting Trees Now
+                    </a>
+
+                    <!-- Decorative elements -->
+                    <div class="absolute -top-5 -left-5 w-10 h-10 border border-secondary"></div>
+                    <div class="absolute -bottom-5 -right-5 w-10 h-10 border border-secondary"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-primary py-12 text-light">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                    <div>
+                        <a href="/" class="flex items-center space-x-3 mb-6">
+                            <!-- Logo is a placeholder SVG tree -->
+                            <svg class="h-8 w-8 text-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.5a1 1 0 0 1 1 1v6.25a1 1 0 0 1-2 0V3.5a1 1 0 0 1 1-1zm-6 9a1 1 0 0 1 1 1v2.25a1 1 0 0 1-2 0V12.5a1 1 0 0 1 1-1zm12 0a1 1 0 0 1 1 1v2.25a1 1 0 0 1-2 0V12.5a1 1 0 0 1 1-1zM12 5.5a1 1 0 0 1 1 1v3.25a1 1 0 0 1-2 0V6.5a1 1 0 0 1 1-1z" />
+                                <path d="M12 20.5a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8zm0 2a10 10 0 0 1-10-10 10 10 0 0 1 10-10 10 10 0 0 1 10 10 10 10 0 0 1-10 10z" />
+                            </svg>
+                            <span class="text-xl font-extralight tracking-wider">EcoTap</span>
+                        </a>
+                        <p class="font-light text-light/70 mb-6">Play games, plant trees, and make a real difference with the world's most engaging eco-friendly mobile game.</p>
+                        <div class="flex space-x-4">
+                            <a href="https://t.me/+-fW35c-RW69hOWI0" target="_blank" class="text-light hover:text-secondary transition-colors">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="https://x.com/MyLovelyPlanet1" target="_blank" class="text-light hover:text-secondary transition-colors">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://www.instagram.com/mylovelyplanet_official/" target="_blank" class="text-light hover:text-secondary transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-light mb-6">Quick Links</h3>
+                        <ul class="space-y-3 font-light">
+                            <li><a href="#game" class="text-light/70 hover:text-secondary transition-colors">Game</a></li>
+                            <li><a href="#features" class="text-light/70 hover:text-secondary transition-colors">Features</a></li>
+                            <li><a href="#planting" class="text-light/70 hover:text-secondary transition-colors">Tree Planting</a></li>
+                            <li><a href="#screenshots" class="text-light/70 hover:text-secondary transition-colors">Screenshots</a></li>
+                            <li><a href="#download" class="text-light/70 hover:text-secondary transition-colors">Download</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-light mb-6">Game Info</h3>
+                        <ul class="space-y-3 font-light">
+                            <li class="text-light/70">Genre: Match-3, Puzzle</li>
+                            <li class="text-light/70">Age Rating: 3+</li>
+                            <li class="text-light/70">Rating: 4.8/5 (769 reviews)</li>
+                            <li class="text-light/70">Downloads: 10,000+</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-light mb-6">Contact Us</h3>
+                        <p class="font-light text-light/70 mb-4">Have questions or feedback? We'd love to hear from you!</p>
+                        <a href="mailto:support@ecotap-game.com" class="text-secondary hover:underline">support@bestchoice-winner.com</a>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-light/20 text-center">
+                    <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-8 mb-6 font-light text-sm">
+                        <a href="/Policy356/" class="text-light/70 hover:text-secondary transition-colors">Privacy Policy</a>
+                        <a href="/Service347/" class="text-light/70 hover:text-secondary transition-colors">Terms of Use</a>
+                        <a href="/Cookie992/" class="text-light/70 hover:text-secondary transition-colors">Cookie Policy</a>
+                    </div>
+                    <p class="text-light/70 font-light text-sm">© 2025 EcoTap | My Lovely Planet. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // Simple JavaScript for mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.querySelector('.md\\:hidden');
+            const mobileMenu = document.querySelector('.hidden.md\\:hidden');
+
+            menuButton.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+
+            // Automatically generate some stars in the background
+            const starsContainer = document.querySelector('.stars-container');
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.backgroundColor = '#5a9d2d';
+                star.style.borderRadius = '50%';
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                starsContainer.appendChild(star);
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // Adjust for header height
+                            behavior: 'smooth'
+                        });
+
+                        // Close mobile menu if open
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+<?php
+$cookieConsentHtml = '
+<style>
+.cookie-consent {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    background: rgba(0, 49, 0, 0.95); /* Using primary color with transparency */
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border-top: 3px solid #5a9d2d; /* Using secondary color */
+}
+
+.cookie-container {
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cookie-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.cookie-title {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-weight: 300; /* Changed to light font weight */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-right: 1.5rem;
+    margin-bottom: 0;
+    white-space: nowrap;
+    letter-spacing: 0.05em; /* Added letter spacing for the futuristic look */
+}
+
+.cookie-title i {
+    color: #5a9d2d; /* Secondary color for icon */
+    font-size: 1.25rem;
+}
+
+.cookie-text {
+    color: #ffffff; /* White text for better contrast */
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+    font-weight: 300; /* Light font weight */
+    letter-spacing: 0.02em; /* Slight letter spacing */
+}
+
+.cookie-link {
+    color: #5a9d2d; /* Secondary color for links */
+    text-decoration: none;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.cookie-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #5a9d2d; /* Secondary color underline */
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.cookie-link:hover::after {
+    transform: scaleX(1);
+}
+
+.cookie-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.cookie-button-reject,
+.cookie-button-accept {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 300; /* Light font weight */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 0; /* Removed rounded corners for minimalist style */
+}
+
+.cookie-button-reject {
+    background: transparent; /* Transparent background */
+    color: #ffffff;
+    border: 1px solid #ffffff; /* Thin white border */
+}
+
+.cookie-button-reject:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.cookie-button-accept {
+    background: #5a9d2d; /* Secondary color button */
+    color: #ffffff; /* White text */
+    border: 1px solid #5a9d2d;
+    font-weight: 300;
+}
+
+.cookie-button-accept:hover {
+    background: #5a9d2d;
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 992px) {
+    .cookie-container {
+        flex-direction: column;
+        padding: 1.25rem;
+    }
+
+    .cookie-content {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1.25rem;
+        width: 100%;
+    }
+
+    .cookie-title {
+        margin-bottom: 0.75rem;
+    }
+
+    .cookie-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 576px) {
+    .cookie-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+    
+    .cookie-button-reject,
+    .cookie-button-accept {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+<div id="cookieConsent" class="cookie-consent">
+    <div class="cookie-container">
+        <div class="cookie-content">
+            <h3 class="cookie-title">
+                <i class="fas fa-cookie-bite"></i>
+                Cookie Policy
+            </h3>
+            <p class="cookie-text">
+                EcoTap uses cookies to enhance your gaming experience. By continuing to use our website, you agree to the use of cookies. For more information, you can read our
+                <a href="/Policy356/" class="cookie-link">Privacy Policy</a>,
+                <a href="/Service347/" class="cookie-link">Terms of Service</a>,
+                and
+                <a href="/Cookie992/" class="cookie-link">Cookie Policy</a>.
+            </p>
+        </div>
+        
+        <div class="cookie-buttons">
+            <button id="rejectCookies" class="cookie-button-reject">
+                Reject
+            </button>
+            <button id="acceptCookies" class="cookie-button-accept">
+                Accept
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+   const cookieConsent = document.getElementById("cookieConsent");
+   const acceptBtn = document.getElementById("acceptCookies");
+   const rejectBtn = document.getElementById("rejectCookies");
+   
+   if (!getCookie("aprenderd_cookie_consent")) {
+       setTimeout(() => {
+           cookieConsent.style.transform = "translateX(0)";
+       }, 1000);
+   }
+
+   function getCookie(name) {
+       let matches = document.cookie.match(new RegExp(
+           "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"
+       ));
+       return matches ? decodeURIComponent(matches[1]) : undefined;
+   }
+   
+   function setCookie(name, value, days) {
+       const date = new Date();
+       date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+       const expires = "; expires=" + date.toUTCString();
+       document.cookie = name + "=" + value + expires + "; path=/; SameSite=Strict; Secure";
+   }
+
+   function handleConsent(consent) {
+       setCookie("aprenderd_cookie_consent", consent, 365);
+       cookieConsent.style.transform = "translateX(120%)";
+       
+       setTimeout(() => {
+           cookieConsent.remove();
+       }, 500);
+   }
+
+   acceptBtn.addEventListener("click", () => handleConsent("accepted"));
+   rejectBtn.addEventListener("click", () => handleConsent("rejected"));
+});
+</script>
+';
+
+if (!isset($_COOKIE["aprenderd_cookie_consent"])) {
+    echo $cookieConsentHtml;
+}
+?>
